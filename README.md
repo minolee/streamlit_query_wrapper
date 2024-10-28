@@ -3,6 +3,8 @@
 ## About
 This project provides wrapper of default streamlit input widgets(checkbox, multibox, etc.).
 
+With sharable link, you can access with exactly same setting you used.
+
 ## Install
 TBA
 
@@ -13,7 +15,7 @@ import streamlit_query_wrapper as stq
 
 stq.radio("Test", ["Hello", "world"])
 
-stq.sharable_link()
+stq.sharable_link() # shows st.code component with sharable URL
 ```
 
 Result

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "streamlit-query-wrapper"
+version = "0.1.0"
+description = "A wrapper for Streamlit components accessable via query parameters"
+authors = [
+    {name = "Minho Lee", email = "lmh30002@gmail.com"}
+]
+maintainers = [
+    {name = "Minho Lee", email = "lmh30002@gmail.com"}
+]
+
+readme = "README.md"
+
+dependencies = [
+    "streamlit"
+]
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+[project.urls]
+Homepage = "https://github.com/minolee/streamlit_query_wrapper"
