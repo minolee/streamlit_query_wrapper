@@ -4,12 +4,19 @@ import hashlib
 from typing import Callable, Any
 from functools import wraps, partial
 import inspect
-__all__ = ["checkbox", "radio", "selectbox", "multiselect", "slider", "text_input", "number_input", "sharable_link"]
+__all__ = ["wrap", "checkbox", "radio", "selectbox", "multiselect", "slider", "text_input", "number_input", "sharable_link"]
 
 def SHA1(obj):
     return hashlib.sha1(str(obj).encode()).hexdigest()
 
 _QUERY_TABLES = {}
+
+def get_base_url():
+    # https://github.com/streamlit/streamlit/issues/798#issuecomment-1647759949
+    import urllib.parse
+    session = st.runtime.get_instance()._session_mgr.list_active_sessions()[0]
+    st_base_url = urllib.parse.urlunparse([session.client.request.protocol, session.client.request.host, "", "", "", ""])
+    return st_base_url
 
 def sharable_link():
     result = ""
@@ -19,7 +26,8 @@ def sharable_link():
                 result += f"{key}={item}&"
         else:
             result += f"{key}={value}&"
-    return result.strip("&")
+    st.code(get_base_url() + "?" + result.strip("&"))
+    # return result.strip("&")
 
 def map_positional_arg_to_keyword_args(module, *args):
     signature = inspect.signature(module)
@@ -97,10 +105,19 @@ def wrap(widget: Callable):
     return inner_widget
 
 checkbox = wrap(st.checkbox)
-radio = wrap(st.radio)
+radio = wrap(widget=st.radio)
 selectbox = wrap(st.selectbox)
 multiselect = wrap(st.multiselect)
 slider = wrap(st.slider)
 text_input = wrap(st.text_input)
 number_input = wrap(st.number_input)
 
+class sidebar:
+    checkbox = wrap(st.sidebar.checkbox)
+    radio = wrap(st.sidebar.radio)
+    selectbox = wrap(st.sidebar.selectbox)
+    multiselect = wrap(st.sidebar.multiselect)
+    slider = wrap(st.sidebar.slider)
+    text_input = wrap(st.sidebar.text_input)
+    number_input = wrap(st.sidebar.number_input)
+    sharable_link = partial(sharable_link)
