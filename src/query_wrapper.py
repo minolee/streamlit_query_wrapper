@@ -88,8 +88,6 @@ def wrap(widget: Callable):
         if options is not None:
             hash_table = load_hash_table(options)
             reverse_hash_table = {value: key for key, value in hash_table.items()}
-        print(_query, hash_table, options)
-
         default_value = load_value_from_query(_query, hash_table)
         if default_value:
             mapped = translate_default_value(widget, default_value, options)
