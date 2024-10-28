@@ -4,7 +4,7 @@ import hashlib
 from typing import Callable, Any
 from functools import wraps, partial
 import inspect
-__all__ = ["wrap", "checkbox", "radio", "selectbox", "multiselect", "slider", "text_input", "number_input", "sharable_link"]
+__all__ = ["wrap", "checkbox", "radio", "selectbox", "multiselect", "slider", "text_input", "number_input", "sharable_link", "sidebar"]
 
 def SHA1(obj):
     return hashlib.sha1(str(obj).encode()).hexdigest()
