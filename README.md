@@ -6,7 +6,7 @@ This project provides wrapper of default streamlit input widgets(checkbox, multi
 With sharable link, you can access with exactly same setting you used.
 
 ## Install
-TBA
+`pip install streamlit-query-wrapper`
 
 ## Usage
 
@@ -37,3 +37,4 @@ Supports
 
 Also works with `st.sidebar`. You can use as `stq.sidebar.checkbox` and so on.
 
+As in original streamlit, this module uses label as default key value, and duplicate is not allowed.
