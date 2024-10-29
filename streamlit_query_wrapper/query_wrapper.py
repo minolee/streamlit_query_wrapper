@@ -113,10 +113,13 @@ def wrap(widget: Callable):
 
         result = widget(**mapped_kwargs)
         query_value = [reverse_hash_table.get(value, value) for value in result] if isinstance(result, list) else reverse_hash_table.get(result, result)
-        if options is not None:
-            _QUERY_TABLES[_query] = query_value
+        if result is not None:
+            if options is not None:
+                _QUERY_TABLES[_query] = query_value
+            else:
+                _QUERY_TABLES[_query] = result
         else:
-            _QUERY_TABLES[_query] = result
+            _QUERY_TABLES.pop(_query, None)
         return result
     return inner_widget
 
