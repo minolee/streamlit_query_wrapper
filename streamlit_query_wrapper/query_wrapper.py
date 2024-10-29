@@ -4,7 +4,7 @@ import hashlib
 from typing import Callable, Any
 from functools import wraps, partial
 import inspect
-__all__ = ["wrap", "checkbox", "radio", "selectbox", "multiselect", "slider", "text_input", "number_input", "sharable_link", "sidebar"]
+__all__ = ["wrap", "checkbox", "radio", "selectbox", "multiselect", "slider", "text_input", "number_input", "sharable_link", "sharable_part", "sidebar"]
 
 def SHA1(obj):
     return hashlib.sha1(str(obj).encode()).hexdigest()
@@ -26,8 +26,17 @@ def sharable_link():
                 result += f"{key}={item}&"
         else:
             result += f"{key}={value}&"
-    st.code(get_base_url() + "?" + result.strip("&"))
-    # return result.strip("&")
+    st.code(get_base_url() + "?" + sharable_part())
+
+def sharable_part():
+    result = ""
+    for key, value in _QUERY_TABLES.items():
+        if isinstance(value, list):
+            for item in value:
+                result += f"{key}={item}&"
+        else:
+            result += f"{key}={value}&"
+    return result.strip("&")
 
 def map_positional_arg_to_keyword_args(module, *args):
     signature = inspect.signature(module)
@@ -37,11 +46,17 @@ def map_positional_arg_to_keyword_args(module, *args):
 def load_value_from_query(query: str, hash_table: dict[str, Any]):
     values = st.query_params.get_all(query)
     if query in st.query_params: st.query_params.pop(query)
+    # todo: shorten url
     return [hash_table.get(value, value) for value in values]
 
 @st.cache_data
 def load_hash_table(items: list[Any]):
-    return {SHA1(item)[:3]: item for item in items if should_use_hash(item)}
+    hash_base_length = 3
+    table = {SHA1(item)[:hash_base_length]: item for item in items if should_use_hash(item)}
+    while len(table) != len(items): # has duplicate
+        hash_base_length += 1
+        table = {SHA1(item)[:hash_base_length]: item for item in items if should_use_hash(item)}
+    return table
 
 def should_use_hash(value: Any):
     return isinstance(value, str) and (len(value) > 8 or len(value) == 0 or any(x in value for x in "?&=/"))
@@ -90,7 +105,10 @@ def wrap(widget: Callable):
             reverse_hash_table = {value: key for key, value in hash_table.items()}
         default_value = load_value_from_query(_query, hash_table)
         if default_value:
-            mapped = translate_default_value(widget, default_value, options)
+            try:
+                mapped = translate_default_value(widget, default_value, options)
+            except Exception as e:
+                st.warning(f"{e.__class__.__name__}: Value {default_value} of query {query} is not valid")
             mapped_kwargs |= mapped
 
         result = widget(**mapped_kwargs)
@@ -103,7 +121,7 @@ def wrap(widget: Callable):
     return inner_widget
 
 checkbox = wrap(st.checkbox)
-radio = wrap(widget=st.radio)
+radio = wrap(st.radio)
 selectbox = wrap(st.selectbox)
 multiselect = wrap(st.multiselect)
 slider = wrap(st.slider)
