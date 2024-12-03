@@ -51,11 +51,12 @@ def load_value_from_query(query: str, hash_table: dict[str, Any]):
 
 @st.cache_data
 def load_hash_table(items: list[Any]):
+    convert = lambda item, len: (SHA1(item)[:len] if should_use_hash(item) else item)
     hash_base_length = 3
-    table = {SHA1(item)[:hash_base_length]: item for item in items if should_use_hash(item)}
+    table = {convert(item, hash_base_length): item for item in items}
     while len(table) != len(items): # has duplicate
         hash_base_length += 1
-        table = {SHA1(item)[:hash_base_length]: item for item in items if should_use_hash(item)}
+        table = {convert(item, hash_base_length): item for item in items}
     return table
 
 def should_use_hash(value: Any):
