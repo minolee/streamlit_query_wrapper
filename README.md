@@ -35,6 +35,6 @@ Supports
 * `text_input`
 * `number_input`
 
-Also works with `st.sidebar`. You can use as `stq.sidebar.checkbox` and so on.
+Also works with `st.sidebar`. You can use either `stq.sidebar.checkbox`, or `stq.checkbox` in `with st.sidebar` statement.
 
 As in original streamlit, this module uses label as default key value, and duplicate is not allowed.
